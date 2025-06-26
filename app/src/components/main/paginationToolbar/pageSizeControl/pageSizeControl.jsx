@@ -28,7 +28,7 @@ import styles from './pageSizeControl.scss';
 
 const cx = classNames.bind(styles);
 
-const MAX_SIZE = 300;
+const MAX_SIZE = 900;
 
 @connect((state) => ({
   page: pageSelector(state),

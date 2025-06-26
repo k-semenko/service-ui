@@ -21,6 +21,8 @@ import { FormattedRelativeTime } from 'react-intl';
 import { START_TIME_FORMAT_RELATIVE, START_TIME_FORMAT_ABSOLUTE } from 'controllers/user';
 import { dateFormat, getRelativeUnits } from 'common/utils/timeDateUtils';
 import styles from './absRelTime.scss';
+import moment from 'moment';
+import {DATETIME_FORMAT_TOOLTIP} from "common/constants/timeDateFormat";
 
 const cx = classNames.bind(styles);
 
@@ -60,7 +62,7 @@ class AbsRelTime extends Component {
         <span className={cx('relative-time')}>
           <FormattedRelativeTime value={relativeTime} unit={unit} numeric="auto" />
         </span>
-        <span className={cx('absolute-time')}>{dateFormat(startTime)}</span>
+        <span className={cx('absolute-time')}>{moment(startTime).format(DATETIME_FORMAT_TOOLTIP)}</span>
       </div>
     );
   }
