@@ -48,6 +48,7 @@ import { Attachments } from './attachments';
 import { getActionMessage } from '../utils/getActionMessage';
 import styles from './logItemInfoTabs.scss';
 import { LogsGridWrapper } from '../../logsGridWrapper';
+import {FAILED} from "common/constants/testStatuses";
 
 const cx = classNames.bind(styles);
 
@@ -131,13 +132,19 @@ export class LogItemInfoTabs extends Component {
   static getDerivedStateFromProps(props) {
     return props.loading
       ? {
-          activeTabId: null,
-        }
+        activeTabId: null,
+      }
       : null;
   }
 
   componentDidMount() {
-    const { activeTabId, fetchFirstAttachments } = this.props;
+    const { logItem, activeTabId, fetchFirstAttachments, setActiveTabId } = this.props;
+
+    // Check if the logItem has a status and set the active tab accordingly
+    if (logItem && logItem.status === FAILED) {
+      setActiveTabId('stack');
+    }
+
     if (activeTabId === ATTACHMENTS_TAB_ID) {
       fetchFirstAttachments();
     }
@@ -150,10 +157,19 @@ export class LogItemInfoTabs extends Component {
       isSauceLabsIntegrationView,
       loading,
       logId,
+      setActiveTabId,
+      logItem,
     } = this.props;
+
+    // Set the active tab based on the logItem status if it has changed
+    if (prevProps.logId !== logId && logItem && activeTabId !== ATTACHMENTS_TAB_ID) {
+      setActiveTabId(logItem.status === FAILED ? 'stack' : 'logs');
+    }
+
     if (loading && isSauceLabsIntegrationView) {
       this.props.onToggleSauceLabsIntegrationView();
     }
+
     if (prevProps.logId !== logId && activeTabId === ATTACHMENTS_TAB_ID) {
       fetchFirstAttachments();
     }

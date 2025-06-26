@@ -26,6 +26,8 @@ import { logTimeFormatSelector } from 'controllers/user/selectors';
 import { setLogTimeFormatInStorage } from 'controllers/log/storageUtils';
 import { LOG_PAGE_EVENTS } from 'components/main/analytics/events';
 import styles from './flexibleLogTime.scss';
+import moment from 'moment';
+import {DATETIME_FORMAT_TOOLTIP} from "common/constants/timeDateFormat";
 
 const cx = classNames.bind(styles);
 
@@ -43,7 +45,7 @@ export const FlexibleLogTime = ({ time }) => {
     dispatch(setLogTimeFormatAction(format));
     setLogTimeFormatInStorage(userId, format);
   };
-  const absoluteTime = dateFormat(time);
+  const absoluteTime = moment(time).format(DATETIME_FORMAT_TOOLTIP);
 
   const extractMilliseconds = () => getMicroSeconds(time).slice(0, 3);
 
