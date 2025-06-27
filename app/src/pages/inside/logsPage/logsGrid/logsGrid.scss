@@ -16,6 +16,27 @@
 
 .logs-grid {
   position: relative;
+
+  [class*="grid-cell"] {
+    padding: 3px;
+
+    &:first-child {
+      padding-left: 20px;
+    }
+
+    &:last-child {
+      padding-right: 15px;
+    }
+  }
+
+  [class*="viewer-wrapper"] {
+    min-height: 15px;
+
+    > [class*="markdown-viewer"] p {
+      line-height: 15px;
+      font-size: 11px;
+    }
+  }
 }
 
 .message-column {
