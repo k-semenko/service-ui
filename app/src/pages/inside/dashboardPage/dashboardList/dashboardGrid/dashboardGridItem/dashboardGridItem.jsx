@@ -23,6 +23,8 @@ import { getDashboardItemPageLinkSelector } from 'controllers/dashboard/selector
 import { Icon } from 'components/main/icon';
 import { NavLink } from 'components/main/navLink';
 import styles from './dashboardGridItem.scss';
+import {getStorageItem, setStorageItem} from "common/utils";
+import {FAVOURITES_DASHBOARDS_STORAGE_KEY} from "controllers/dashboard/constants";
 
 const cx = classNames.bind(styles);
 
@@ -70,6 +72,40 @@ export class DashboardGridItem extends Component {
     onDelete(item);
   };
 
+  addToFavourites = (e) => {
+    e.preventDefault();
+
+    let favouritesDashboards = getStorageItem(FAVOURITES_DASHBOARDS_STORAGE_KEY);
+    const { item } = this.props;
+
+    if (favouritesDashboards == null) {
+      favouritesDashboards = [];
+      favouritesDashboards.push(item.id);
+      setStorageItem(FAVOURITES_DASHBOARDS_STORAGE_KEY, JSON.stringify(favouritesDashboards));
+      item.onFavourites = true;
+      alert(`Dashboard '${item?.name}' added to favourites`);
+    } else {
+      const favourites = JSON.parse(favouritesDashboards);
+      if (!favourites.includes(item.id)) {
+        favourites.push(item.id);
+        setStorageItem(FAVOURITES_DASHBOARDS_STORAGE_KEY, JSON.stringify(favourites));
+        item.onFavourites = true;
+        alert(`Dashboard '${item?.name}' added to favourites`);
+      } else {
+        const index = favourites.indexOf(item.id);
+        favourites.splice(index, 1);
+        setStorageItem(FAVOURITES_DASHBOARDS_STORAGE_KEY, JSON.stringify(favourites));
+        item.onFavourites = false;
+        alert(`Dashboard '${item?.name}' removed from favourites`);
+      }
+    }
+  }
+
+  get getFavouriteIcon() {
+    const {item} = this.props;
+    return item.onFavourites ?? false ? 'icon-favourites-off' : 'icon-favourites';
+  }
+
   render() {
     const { item, getDashboardItemPageLink } = this.props;
     const { name, description, owner, id } = item;
@@ -95,6 +131,9 @@ export class DashboardGridItem extends Component {
             <p>{description}</p>
           </div>
           <div className={cx('grid-cell', 'owner')}>{owner}</div>
+          <div className={cx('grid-cell', 'favourite')} onClick={this.addToFavourites}>
+            <Icon type={this.getFavouriteIcon} />
+          </div>
           <div className={cx('grid-cell', 'edit')} onClick={this.editItem}>
             <Icon type="icon-pencil" />
           </div>

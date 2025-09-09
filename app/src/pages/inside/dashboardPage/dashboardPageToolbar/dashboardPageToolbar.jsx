@@ -23,6 +23,7 @@ import { validate, bindMessageToValidator } from 'common/utils/validation';
 import { GhostButton } from 'components/buttons/ghostButton';
 import GridViewDashboardIcon from 'common/img/grid-inline.svg';
 import TableViewDashboardIcon from 'common/img/table-inline.svg';
+import SaveDashboardIcon from 'common/img/save-inline.svg';
 import { reduxForm } from 'redux-form';
 import { InputSearch } from 'components/inputs/inputSearch';
 import { FieldProvider } from 'components/fields/fieldProvider';
@@ -53,6 +54,7 @@ export class DashboardPageToolbar extends Component {
     isSearchDisabled: PropTypes.bool,
     onGridViewToggle: PropTypes.func,
     onTableViewToggle: PropTypes.func,
+    onFavouritesToggle: PropTypes.func,
     gridType: PropTypes.string,
     tracking: PropTypes.shape({
       trackEvent: PropTypes.func,
@@ -64,6 +66,7 @@ export class DashboardPageToolbar extends Component {
     isSearchDisabled: false,
     onGridViewToggle: () => {},
     onTableViewToggle: () => {},
+    onFavouritesToggle: () => {},
     gridType: '',
     onFilterChange: () => {},
   };
@@ -76,7 +79,7 @@ export class DashboardPageToolbar extends Component {
   };
 
   render() {
-    const { intl, onGridViewToggle, onTableViewToggle, gridType, isSearchDisabled } = this.props;
+    const { intl, onFavouritesToggle, onGridViewToggle, onTableViewToggle, gridType, isSearchDisabled } = this.props;
 
     return (
       <div className={cx('tool-bar')}>
@@ -92,6 +95,7 @@ export class DashboardPageToolbar extends Component {
           </FieldProvider>
         </div>
         <div className={cx('buttons', `active-${gridType}`)}>
+          <GhostButton onClick={onFavouritesToggle} icon={SaveDashboardIcon} />
           <GhostButton onClick={onGridViewToggle} icon={GridViewDashboardIcon} />
           <GhostButton onClick={onTableViewToggle} icon={TableViewDashboardIcon} />
         </div>

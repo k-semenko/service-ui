@@ -44,6 +44,8 @@ import { withFilter } from 'controllers/filter';
 import { DashboardPageHeader } from 'pages/inside/common/dashboardPageHeader';
 import { DashboardList } from './dashboardList';
 import { DashboardPageToolbar } from './dashboardPageToolbar';
+import {DASHBOARDS_FAVOURITES_VIEW, FAVOURITES_DASHBOARDS_STORAGE_KEY} from "controllers/dashboard/constants";
+import {getStorageItem} from "common/utils";
 
 const messages = defineMessages({
   pageTitle: {
@@ -239,6 +241,29 @@ export class DashboardPage extends Component {
     this.props.changeVisibilityType(DASHBOARDS_TABLE_VIEW);
   };
 
+  toggleFavourites = () => {
+    this.props.changeVisibilityType(DASHBOARDS_FAVOURITES_VIEW)
+  }
+
+  getDashboards = (dashboardItems) => {
+    if (dashboardItems && dashboardItems?.length === 0) {
+      return [];
+    }
+
+    const storageItem = getStorageItem(FAVOURITES_DASHBOARDS_STORAGE_KEY);
+    const favouriteDashboards = storageItem != null ? JSON.parse(storageItem) : [];
+
+    let favDash = dashboardItems?.filter((item) => favouriteDashboards?.includes(item.id));
+    if (favDash?.length > 0) {
+      favDash = favDash.map(item => {
+        item.onFavourites = true;
+        return item;
+      });
+    }
+
+    return this.props.gridType === DASHBOARDS_FAVOURITES_VIEW ? favDash : dashboardItems;
+  }
+
   render() {
     const {
       gridType,
@@ -267,10 +292,11 @@ export class DashboardPage extends Component {
             isSearchDisabled={!dashboardItems.length && !filter && !loading}
             onGridViewToggle={this.toggleGridView}
             onTableViewToggle={this.toggleTableView}
+            onFavouritesToggle={this.toggleFavourites}
             gridType={gridType}
           />
           <DashboardList
-            dashboardItems={dashboardItems}
+            dashboardItems={this.getDashboards(dashboardItems)}
             gridType={gridType}
             userInfo={userInfo}
             loading={loading}

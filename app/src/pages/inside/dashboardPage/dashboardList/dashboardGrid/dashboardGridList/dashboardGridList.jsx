@@ -21,6 +21,8 @@ import { SpinningPreloader } from 'components/preloaders/spinningPreloader';
 import { DashboardGridItem } from 'pages/inside/dashboardPage/dashboardList/dashboardGrid/dashboardGridItem';
 import { EmptyDashboards } from 'pages/inside/dashboardPage/dashboardList/EmptyDashboards';
 import styles from './dashboardGridList.scss';
+import {getSessionItem, getStorageItem} from "common/utils";
+import {FAVOURITES_DASHBOARDS_STORAGE_KEY} from "controllers/dashboard/constants";
 
 const cx = classNames.bind(styles);
 
@@ -34,6 +36,8 @@ export const DashboardGridList = ({
   filter,
   ...rest
 }) => {
+  const storageItem = getStorageItem(FAVOURITES_DASHBOARDS_STORAGE_KEY);
+
   const noItems = loading ? (
     <SpinningPreloader />
   ) : (
