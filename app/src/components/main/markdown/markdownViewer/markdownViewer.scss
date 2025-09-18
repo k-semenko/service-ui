@@ -24,8 +24,8 @@
   width: 100%;
   height: auto;
   font-family: $FONT-MONOSPACE;
-  color: $COLOR--charcoal-grey;
   font-size: 12px;
+  line-height: 14px;
   overflow: hidden;
   word-wrap: break-word;
   word-break: break-all;
@@ -83,7 +83,6 @@
       margin-bottom: 10px;
       border: none;
       border-radius: 0;
-      padding: 10px;
       display: block;
     }
   }
@@ -136,9 +135,17 @@
     padding: 2px 4px;
     font-family: $FONT-MONOSPACE;
     font-size: 90%;
-    color: $COLOR--khaki-green;
-    background-color: $COLOR--has-permission;
+    //color: $COLOR--khaki-green;
+    //background-color: $COLOR--has-permission;
     border-radius: 0.3rem;
+  }
+  summary {
+    cursor: pointer;
+    font-weight: bold;
+
+    &::marker {
+      content: "⏬ ";
+    }
   }
   :global {
     code.language-error {
