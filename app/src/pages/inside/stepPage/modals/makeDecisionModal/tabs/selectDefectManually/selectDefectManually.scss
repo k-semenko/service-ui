@@ -23,9 +23,16 @@
   display: flex;
   top: -35px;
   right: 2px;
+  gap: 15px;
+  align-items: center;
 }
 
 .ignore-analysis-text {
+  color: $COLOR--darkmode-gray-100;
+  font-size: 13px;
+}
+
+.auto-comment-text {
   color: $COLOR--darkmode-gray-100;
   font-size: 13px;
 }

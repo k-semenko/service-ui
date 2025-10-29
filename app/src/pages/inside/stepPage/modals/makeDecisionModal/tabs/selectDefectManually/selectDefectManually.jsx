@@ -42,6 +42,7 @@ import {
   makeDecisionDefectTypeAddonSelector,
 } from 'controllers/plugins/uiExtensions/selectors';
 import { InputCheckbox } from 'components/inputs/inputCheckbox';
+import { GhostButton } from 'components/buttons/ghostButton';
 import {
   ADD_FOR_ALL,
   NOT_CHANGED_FOR_ALL,
@@ -74,11 +75,44 @@ export const SelectDefectManually = ({
   const [commentEditor, setCommentEditor] = useState(null);
   const defectFromTIGroup = itemData.issue?.issueType.startsWith(TO_INVESTIGATE_LOCATOR_PREFIX);
 
+  // Auto comment functionality
+  const [autoCommentEnabled, setAutoCommentEnabled] = useState(() => {
+    const saved = localStorage.getItem('reportportal.autoComment.enabled');
+    return saved ? JSON.parse(saved) : false;
+  });
+
   const source = modalState.selectManualChoice;
+
+  // Get the current comment value for the editor
+  const getCurrentCommentValue = () => {
+    const currentComment = modalState.decisionType === SELECT_DEFECT_MANUALLY
+      ? source.issue.comment
+      : itemData.issue.comment;
+    
+    // If there's already a comment, return it
+    if (currentComment && currentComment.trim() !== '') {
+      return currentComment;
+    }
+    
+    // If auto comment is enabled and we have description for TI defects, show description
+    if (
+      autoCommentEnabled &&
+      defectFromTIGroup &&
+      itemData.description &&
+      itemData.description.trim() !== '' &&
+      !isBulkOperation
+    ) {
+      return itemData.description;
+    }
+    
+    // Otherwise return empty comment
+    return currentComment || '';
+  };
 
   useEffect(() => {
     if (
       defectFromTIGroup &&
+      autoCommentEnabled &&
       modalState.decisionType === SELECT_DEFECT_MANUALLY &&
       (!source.issue.comment || source.issue.comment.trim() === '') &&
       itemData.description &&
@@ -87,7 +121,7 @@ export const SelectDefectManually = ({
     ) {
       handleManualChange({ comment: itemData.description });
     }
-  }, [defectFromTIGroup, itemData.description, isBulkOperation, modalState.decisionType]);
+  }, [defectFromTIGroup, autoCommentEnabled, itemData.description, isBulkOperation, modalState.decisionType]);
 
   const handleManualChange = (value = {}, extraAnalyticsParams = {}) => {
     const issue = {
@@ -128,6 +162,47 @@ export const SelectDefectManually = ({
       ) {
         setModalState({ commentOption: NOT_CHANGED_FOR_ALL });
       }
+    }
+  };
+
+  const handleAutoCommentChange = (e) => {
+    const isEnabled = e.target.checked;
+    setAutoCommentEnabled(isEnabled);
+    localStorage.setItem('reportportal.autoComment.enabled', JSON.stringify(isEnabled));
+    
+    // If enabling auto comment and conditions are met, auto-populate immediately
+    if (
+      isEnabled &&
+      defectFromTIGroup &&
+      modalState.decisionType === SELECT_DEFECT_MANUALLY &&
+      (!source.issue.comment || source.issue.comment.trim() === '') &&
+      itemData.description &&
+      itemData.description.trim() !== '' &&
+      !isBulkOperation
+    ) {
+      handleManualChange({ comment: itemData.description });
+      
+      // Force update the editor if it exists
+      setTimeout(() => {
+        if (commentEditor && commentEditor.setValue) {
+          commentEditor.setValue(itemData.description);
+        }
+      }, 0);
+    }
+  };
+
+  const handleManualInsertDescription = () => {
+    if (itemData.description && itemData.description.trim() !== '') {
+      const currentComment = source.issue.comment || '';
+      const newComment = currentComment ? `${currentComment}\n${itemData.description}` : itemData.description;
+      handleManualChange({ comment: newComment });
+      
+      // Force update the editor if it exists
+      setTimeout(() => {
+        if (commentEditor && commentEditor.setValue) {
+          commentEditor.setValue(newComment);
+        }
+      }, 0);
     }
   };
 
@@ -235,6 +310,32 @@ export const SelectDefectManually = ({
               {formatMessage(width < SCREEN_SM_MAX ? messages.ignoreAaShort : messages.ignoreAa)}
             </span>
           </InputCheckbox>
+          
+          {defectFromTIGroup && itemData.description && (
+            <>
+              <InputCheckbox
+                value={autoCommentEnabled}
+                onChange={handleAutoCommentChange}
+                iconTransparentBackground
+                darkView
+              >
+                <span className={cx('auto-comment-text')}>
+                  Авто коммент
+                </span>
+              </InputCheckbox>
+              
+              <GhostButton
+                onClick={handleManualInsertDescription}
+                color="''"
+                appearance="topaz"
+                transparentBackground
+                small
+                title="Вставить описание теста в комментарий"
+              >
+                Вставить описание
+              </GhostButton>
+            </>
+          )}
         </div>
       )}
       <DefectTypeSelector
@@ -266,11 +367,8 @@ export const SelectDefectManually = ({
         : createDefectTypesBlock()}
       <div className={cx('defect-comment')}>
         <MarkdownEditor
-          value={
-            modalState.decisionType === SELECT_DEFECT_MANUALLY
-              ? source.issue.comment || itemData.description
-              : itemData.issue.comment || itemData.description
-          }
+          key={`comment-${source.issue.comment || ''}`}
+          value={getCurrentCommentValue()}
           manipulateEditorOutside={setCommentEditor}
           onChange={handleDefectCommentChange}
           eventsInfo={{
