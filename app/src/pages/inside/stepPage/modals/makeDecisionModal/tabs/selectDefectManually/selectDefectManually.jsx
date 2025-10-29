@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -75,6 +75,19 @@ export const SelectDefectManually = ({
   const defectFromTIGroup = itemData.issue?.issueType.startsWith(TO_INVESTIGATE_LOCATOR_PREFIX);
 
   const source = modalState.selectManualChoice;
+
+  useEffect(() => {
+    if (
+      defectFromTIGroup &&
+      modalState.decisionType === SELECT_DEFECT_MANUALLY &&
+      (!source.issue.comment || source.issue.comment.trim() === '') &&
+      itemData.description &&
+      itemData.description.trim() !== '' &&
+      !isBulkOperation
+    ) {
+      handleManualChange({ comment: itemData.description });
+    }
+  }, [defectFromTIGroup, itemData.description, isBulkOperation, modalState.decisionType]);
 
   const handleManualChange = (value = {}, extraAnalyticsParams = {}) => {
     const issue = {
@@ -255,8 +268,8 @@ export const SelectDefectManually = ({
         <MarkdownEditor
           value={
             modalState.decisionType === SELECT_DEFECT_MANUALLY
-              ? source.issue.comment
-              : itemData.issue.comment
+              ? source.issue.comment || itemData.description
+              : itemData.issue.comment || itemData.description
           }
           manipulateEditorOutside={setCommentEditor}
           onChange={handleDefectCommentChange}
