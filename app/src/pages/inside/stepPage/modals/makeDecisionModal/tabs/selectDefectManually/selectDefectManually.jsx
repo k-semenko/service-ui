@@ -88,12 +88,12 @@ export const SelectDefectManually = ({
     const currentComment = modalState.decisionType === SELECT_DEFECT_MANUALLY
       ? source.issue.comment
       : itemData.issue.comment;
-    
+
     // If there's already a comment, return it
     if (currentComment && currentComment.trim() !== '') {
       return currentComment;
     }
-    
+
     // If auto comment is enabled and we have description for TI defects, show description
     if (
       autoCommentEnabled &&
@@ -104,7 +104,7 @@ export const SelectDefectManually = ({
     ) {
       return itemData.description;
     }
-    
+
     // Otherwise return empty comment
     return currentComment || '';
   };
@@ -169,7 +169,7 @@ export const SelectDefectManually = ({
     const isEnabled = e.target.checked;
     setAutoCommentEnabled(isEnabled);
     localStorage.setItem('reportportal.autoComment.enabled', JSON.stringify(isEnabled));
-    
+
     // If enabling auto comment and conditions are met, auto-populate immediately
     if (
       isEnabled &&
@@ -181,7 +181,7 @@ export const SelectDefectManually = ({
       !isBulkOperation
     ) {
       handleManualChange({ comment: itemData.description });
-      
+
       // Force update the editor if it exists
       setTimeout(() => {
         if (commentEditor && commentEditor.setValue) {
@@ -196,7 +196,7 @@ export const SelectDefectManually = ({
       const currentComment = source.issue.comment || '';
       const newComment = currentComment ? `${currentComment}\n${itemData.description}` : itemData.description;
       handleManualChange({ comment: newComment });
-      
+
       // Force update the editor if it exists
       setTimeout(() => {
         if (commentEditor && commentEditor.setValue) {
@@ -310,7 +310,7 @@ export const SelectDefectManually = ({
               {formatMessage(width < SCREEN_SM_MAX ? messages.ignoreAaShort : messages.ignoreAa)}
             </span>
           </InputCheckbox>
-          
+
           {defectFromTIGroup && itemData.description && (
             <>
               <InputCheckbox
@@ -323,7 +323,7 @@ export const SelectDefectManually = ({
                   Авто коммент
                 </span>
               </InputCheckbox>
-              
+
               <GhostButton
                 onClick={handleManualInsertDescription}
                 color="''"
@@ -367,7 +367,6 @@ export const SelectDefectManually = ({
         : createDefectTypesBlock()}
       <div className={cx('defect-comment')}>
         <MarkdownEditor
-          key={`comment-${source.issue.comment || ''}`}
           value={getCurrentCommentValue()}
           manipulateEditorOutside={setCommentEditor}
           onChange={handleDefectCommentChange}
