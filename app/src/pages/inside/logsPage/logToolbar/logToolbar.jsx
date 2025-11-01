@@ -23,6 +23,7 @@ import classNames from 'classnames/bind';
 import { LOG_PAGE_EVENTS } from 'components/main/analytics/events';
 import { Breadcrumbs } from 'components/main/breadcrumbs';
 import { GhostButton } from 'components/buttons/ghostButton';
+import { AutoRefreshButton } from 'components/buttons/autoRefreshButton';
 import LeftArrowIcon from 'common/img/arrow-left-small-inline.svg';
 import RightArrowIcon from 'common/img/arrow-right-small-inline.svg';
 import RefreshIcon from 'common/img/refresh-icon-inline.svg';
@@ -221,6 +222,14 @@ export class LogToolbar extends Component {
             <GhostButton icon={RefreshIcon} onClick={onRefresh} transparentBackground>
               <FormattedMessage id="Common.refresh" defaultMessage="Refresh" />
             </GhostButton>
+          </div>
+          <div className={cx('action-button')}>
+            <AutoRefreshButton
+              onRefresh={onRefresh}
+              interval={3000}
+              transparentBackground
+              title="Auto-refresh logs every 3 seconds"
+            />
           </div>
         </div>
       </div>

@@ -1,0 +1,97 @@
+@use "sass:color";
+
+.auto-refresh-button {
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid $COLOR--gray-91;
+  outline: none;
+  box-sizing: border-box;
+  font-family: $FONT-REGULAR;
+  font-size: 13px;
+  letter-spacing: normal;
+  line-height: 28px;
+  white-space: nowrap;
+  text-shadow: none;
+  vertical-align: top;
+  background-color: transparent;
+  cursor: pointer;
+  color: $COLOR--gray-91;
+
+  .icon {
+    display: inline-block;
+    position: relative;
+    width: 20px;
+    height: 20px;
+    margin: auto 5px auto 0;
+    transition: transform 0.3s ease;
+
+    &.spinning {
+      animation: spin 2s linear infinite;
+      transform-origin: center;
+    }
+
+    svg {
+      width: 100%;
+      height: 100%;
+      fill: $COLOR--gray-91;
+    }
+  }
+
+  .text {
+    line-height: 1;
+  }
+
+  &:hover:not(.disabled) {
+    border-color: color.adjust($COLOR--topaz, $lightness: 10%);
+    background-color: color.adjust($COLOR--topaz, $lightness: 10%);
+    color: $COLOR--white-two;
+
+    svg {
+      fill: $COLOR--white-two;
+    }
+  }
+
+  &.auto-refreshing {
+    color: $COLOR--topaz;
+    border-color: $COLOR--topaz;
+
+    svg {
+      fill: $COLOR--darkmode-topaz-main;
+    }
+
+    &:hover {
+      border-color: color.adjust($COLOR--topaz, $lightness: 10%);
+      background-color: color.adjust($COLOR--topaz, $lightness: 10%);
+      color: $COLOR--white-two;
+
+      svg {
+        fill: $COLOR--white-two;
+      }
+    }
+
+    &:active {
+      background-color: $COLOR--topaz;
+      border-color: $COLOR--topaz;
+    }
+  }
+
+  &.disabled {
+    color: $COLOR--gray-60;
+    background-color: $COLOR--white;
+    border-color: $COLOR--gray-91;
+    cursor: default;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
