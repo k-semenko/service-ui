@@ -20,4 +20,4 @@ export const TIME_FORMAT = 'HH:mm';
 export const TIME_DATE_FORMAT = 'HH:mm DD.MM.yyyy';
 export const DATE_FORMAT_TOOLTIP = 'DD.MM.yyyy';
 export const DATETIME_FORMAT_TOOLTIP = 'DD.MM.yyyy HH:mm:ss';
-
+export const DATE_FORMAT_DROPDOWN = 'dd.MM.yyyy';

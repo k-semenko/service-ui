@@ -29,6 +29,7 @@ import {
   activeTabIdSelector,
   setActiveTabIdAction,
 } from 'controllers/log';
+import { noLogsCollapsingSelector } from 'controllers/user';
 import { fetchFirstAttachmentsAction, attachmentItemsSelector } from 'controllers/log/attachments';
 import { SAUCE_LABS } from 'common/constants/pluginNames';
 import { LOG_PAGE_EVENTS } from 'components/main/analytics/events';
@@ -88,6 +89,7 @@ const ATTACHMENTS_TAB_ID = 'attachments';
     sauceLabsIntegrations: availableIntegrationsByPluginNameSelector(state, SAUCE_LABS),
     attachments: attachmentItemsSelector(state),
     activeTabId: activeTabIdSelector(state),
+    noLogsCollapsing: noLogsCollapsingSelector(state),
   }),
   {
     fetchFirstAttachments: fetchFirstAttachmentsAction,
@@ -115,6 +117,7 @@ export class LogItemInfoTabs extends Component {
       getTrackingData: PropTypes.func,
     }).isRequired,
     activeTabId: PropTypes.string,
+    noLogsCollapsing: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -123,6 +126,7 @@ export class LogItemInfoTabs extends Component {
     attachments: [],
     activeTabId: 'logs',
     setActiveTabId: () => {},
+    noLogsCollapsing: false,
   };
 
   state = {
@@ -207,6 +211,7 @@ export class LogItemInfoTabs extends Component {
       intl: { formatMessage },
       activeRetry,
       logItem,
+      noLogsCollapsing,
     } = this.props;
     const history = {
       id: 'history',
@@ -225,6 +230,7 @@ export class LogItemInfoTabs extends Component {
         component: StackTrace,
         componentProps: {
           logItem,
+          expanded: noLogsCollapsing,
           eventsInfo: {
             onOpenStackTraceEvent: () => LOG_PAGE_EVENTS.EXPAND_STACK_TRACE,
           },
